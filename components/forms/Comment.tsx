@@ -18,8 +18,7 @@ import { Input } from "@/components/ui/input";
 
 import { CommentValidaton } from "@/lib/validations/thread";
 import Image from "next/image";
-import { AddCommentToThread } from "@/lib/actions/thread.actions";
-// import { createThread } from "@/lib/actions/thread.actions";
+import { addCommentToThread } from "@/lib/actions/thread.actions";
 
 interface Props {
   threadId: string;
@@ -39,7 +38,7 @@ const Comment = ({ threadId, currentUserImg, currentUserId }: Props) => {
   });
 
   const onSubmit = async (values: z.infer<typeof CommentValidaton>) => {
-    await AddCommentToThread(
+    await addCommentToThread(
       threadId,
       values.thread,
       JSON.parse(currentUserId),
