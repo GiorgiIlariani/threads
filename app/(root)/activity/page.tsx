@@ -9,43 +9,45 @@ async function Page() {
 
   if (!user) return null;
 
-  // getting user id through params
+  // Getting user info through params
   const userInfo = await fetchUser(user.id);
 
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  // getActivity
+  // Get user activity
   const activity = await getActivity(userInfo._id);
 
   return (
-    <section>
-      <h1 className="head-text mb-10"></h1>
+    <section className="p-6">
+      <h1 className="text-3xl font-semibold mb-8">Your Activity</h1>
 
-      <div className="mt-10 flex flex-col gap-5">
+      <div className="space-y-4">
         {activity.length > 0 ? (
           <>
-            {activity.map((activity) => (
-              <Link key={activity._id} href={`/thread/${activity.parentId}`}>
-                <article className="activity-card">
+            {activity.map((activityItem) => (
+              <Link
+                key={activityItem._id}
+                href={`/thread/${activityItem.parentId}`}>
+                <article className="p-4 border rounded-lg cursor-pointer flex items-center bg-transparent">
                   <Image
-                    src={activity.author.image}
+                    src={activityItem.author.image}
                     alt="profile picture"
-                    width={20}
-                    height={20}
-                    className="rounded-full object-contain"
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover mr-4"
                   />
-                  <p className="!text-small-regular text-light-1">
-                    <span className="mr-1 text-primary-500">
-                      {activity.author.name}
-                    </span>{" "}
-                    replied to your thread
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-lg font-medium text-primary-500">
+                      {activityItem.author.name}
+                    </p>
+                    <p className="text-light-1">replied to your thread</p>
+                  </div>
                 </article>
               </Link>
             ))}
           </>
         ) : (
-          <p className="text-light-3 !text-base-regular">No activity yet</p>
+          <p className="text-gray-500 text-lg">No activity yet</p>
         )}
       </div>
     </section>

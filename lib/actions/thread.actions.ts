@@ -55,15 +55,15 @@ interface Params {
   path: string,
 }
 
-export async function createThread({ text, author, communityId, path }: Params
-) {
+export async function createThread({ text, author, communityId, path }: Params ) {
   try {
     connectToDB();
 
     const communityIdObject = await Community.findOne(
       { id: communityId },
       { _id: 1 }
-    );
+    );    
+    
 
     const createdThread = await Thread.create({
       text,
@@ -82,8 +82,8 @@ export async function createThread({ text, author, communityId, path }: Params
         $push: { threads: createdThread._id },
       });
     }
-
     revalidatePath(path);
+
   } catch (error: any) {
     throw new Error(`Failed to create thread: ${error.message}`);
   }
@@ -98,6 +98,8 @@ async function fetchAllChildThreads(threadId: string): Promise<any[]> {
     descendantThreads.push(childThread, ...descendants);
   }
 
+  console.log(descendantThreads);
+  
   return descendantThreads;
 }
 

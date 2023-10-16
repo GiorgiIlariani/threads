@@ -44,8 +44,6 @@ export async function updateUser({
     } catch (error: any) {
         throw new Error(`failed to create/update user: ${error.message}`)
     }
-
-    
 }
 
 export async function fetchUser(userId: string) {
@@ -77,7 +75,6 @@ export async function fetchUserThreads(userId: string) {
                 }
             }
         })
-        // console.log(threads);
         return threads
     } catch (error: any) {
         throw new Error(`Failed to fetch user threads: ${error.message}`)
@@ -104,9 +101,9 @@ export async function  fetchUsers({
     const skipAmount = (pageNumber - 1) * pageSize;
 
     // Create a case-insensitive regular expression for the provided search string.
-    const regex = new RegExp(searchString, "i");
+    const regex = new RegExp(searchString, "i"); // ეს არის რეჯექსი, რათა aPPle დაემთხვეს როგორც apple 
 
-    // Create an initial query object to filter users.
+    // user-ს რომელიც ნახობს სხვა იუსერებს არ უნდა გამოუჩნდეს საკუთარი თავი სეარჩში.
     const query: FilterQuery<typeof User> = {
       id: { $ne: userId }, // Exclude the current user from the results.
     };
@@ -127,8 +124,10 @@ export async function  fetchUsers({
       .skip(skipAmount)
       .limit(pageSize);
 
+      
     // Count the total number of users that match the search criteria (without pagination).
     const totalUsersCount = await User.countDocuments(query);
+
 
     const users = await usersQuery.exec();
 
@@ -147,11 +146,12 @@ export async function getActivity(userId: string) {
     connectToDB();
 
     const userThreads = await Thread.find({ author: userId });
+    
 
     // collect all child threads ids
     const childThreadIds = userThreads.reduce((acc, userThread) => {
       return acc.concat(userThread.children)
-    }, [])
+    }, [])    
 
     const replies = await Thread.find({
       _id: { $in: childThreadIds },
@@ -160,7 +160,7 @@ export async function getActivity(userId: string) {
       path: 'author',
       model: User,
       select: 'name image _id'
-    })
+    })    
 
     return replies;
   } catch (error: any) {

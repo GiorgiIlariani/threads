@@ -1,6 +1,7 @@
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteThread from "../forms/DeleteThread";
 
 interface Props {
   id: string;
@@ -101,24 +102,33 @@ const ThreadCard = ({
                 />
               </div>
 
-              {isComment && comments.length > 0 ? (
+              {isComment && comments.length > 0 && (
                 <Link href={`/thread/${id}`}>
                   <p className="mt-1 text-subtle-medium text-gray-1">
-                    {comments.length} replies
+                    {comments.length} repl{comments.length > 1 ? "ies" : "y"}
                   </p>
                 </Link>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
+
+        <DeleteThread
+          threadId={JSON.stringify(id)}
+          currentUserId={currentUserId}
+          authorId={author.id}
+          parentId={parentId}
+          isComment={isComment}
+        />
       </div>
-      {!isComment && community ? (
-        <Link
-          href={`/communities/${community.id}`}
-          className="mt-5 flex items-center">
-          <p className="text-subtle-medium text-gray-1">
-            {formatDateString(createdAt)} - {community.name} Community
-          </p>
+      <Link
+        href={`/communities/${community?.id}`}
+        className="mt-5 flex items-center">
+        <p className="text-subtle-medium text-gray-1">
+          {formatDateString(createdAt)} {!isComment && community ? " - " : ""}
+          {!isComment && community ? community?.name + " - " + "Community" : ""}
+        </p>
+        {!isComment && community ? (
           <Image
             src={community.image}
             alt={community.name}
@@ -126,8 +136,8 @@ const ThreadCard = ({
             height={40}
             className="ml-1 rounded-full object-cover"
           />
-        </Link>
-      ) : null}
+        ) : null}
+      </Link>
     </article>
   );
 };
